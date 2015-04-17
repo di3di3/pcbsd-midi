@@ -1,0 +1,24 @@
+import sys
+import random
+from mingus.midi import fluidsynth as a
+from mingus.core import *
+from mingus.containers import *
+from mingus.midi import *
+import time
+import usb.core
+import usb.util
+import usb.backend
+
+fluidsynth.init("/usr/home/dmitry/Downloads/soundfont.sf2", "jack")
+
+dev = usb.core.find(idVendor=0x0763, idProduct=0x019b)
+dev.set_configuration()
+endpoint = dev[0][(0,0)][0]
+while True:
+	data = dev.read(endpoint.bEndpointAddress,endpoint.wMaxPacketSize, 1, 100000)
+	print (data)
+	fluidsynth.play_Note(data[2],0,data[3])
+	if data[3] == 0:
+		fluidsynth.stop_Note(data[2],1)
+
+
